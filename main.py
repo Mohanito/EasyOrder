@@ -5,9 +5,9 @@ import pandas as pd
 
 def main():
     manager = Manager()
-    input_path = 'order_list.xlsx'
-    manager.set_input_path(input_path)
-    manager.read_excel()
+    manager.set_input_path("/Users/Mohan/Desktop/EasyOrder/EasyOrder/Orders")
+    manager.read_input_dir()
+    #manager.sort_edd()
 
 
 if __name__ == "__main__":
