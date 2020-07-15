@@ -10,6 +10,12 @@ class Manager:
         self.dataframe = pd.DataFrame()
         self.num_orders = 0
 
+        # below are user inputs
+        self.tujiao_speed = 0
+        self.zhijiao_tujiao = 0
+        self.wait_time = 0
+        self.switch_time = 0
+
     def set_input_path(self, path):
         self.input_path = path
 
@@ -37,7 +43,7 @@ class Manager:
             new_order = Order(deadline_series[i], self.dataframe["SOT"][i], i)
             self.order_list.append(new_order)
     '''
-    
+
     def sort_edd(self):
         self.order_list.sort(key = lambda x: x.EDD, reverse = False)
         for order in self.order_list:
