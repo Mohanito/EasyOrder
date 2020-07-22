@@ -13,7 +13,7 @@ def main():
     '''
     manager.set_input_path("/Users/Mohan/Desktop/EasyOrder/EasyOrder/Orders")
     manager.read_input_dir()
-    #manager.sort_edd()
+    manager.output()
 
 
 if __name__ == "__main__":

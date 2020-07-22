@@ -1,7 +1,11 @@
 import pandas as pd
 from order import *
 import os
+import xlwt
 
+HEADINGS = ["序号", "项目名称", "订单号", "产品配置", "单片玻璃种类", "单片玻璃厚度(mm)", 
+            "总片数", "总面积(m^2)", "长边单侧累计长度(mm)", "总周长(mm)", "", "交货日期",
+            "EDD", "SOT", "STR", "订单延迟时间"]
 
 class Manager:
     def __init__(self):
@@ -11,10 +15,10 @@ class Manager:
         self.num_orders = 0
 
         # below are user inputs
-        self.tujiao_speed = 0
-        self.zhijiao_tujiao = 0
-        self.wait_time = 0
-        self.switch_time = 0
+        self.tujiao_speed = 1
+        self.zhijiao_tujiao = 1
+        self.wait_time = 1
+        self.switch_time = 1
 
     def set_input_path(self, path):
         self.input_path = path
@@ -24,25 +28,28 @@ class Manager:
             if ".xls" in filename:
                 new_order = Order(self.input_path + '/' + filename)
                 new_order.read_input()
-                # new_order.print_order_details()
-        self.order_list.append(new_order)
+                # （每个订单号的玻璃累计周长/涂胶速度(input)）+ 每片玻璃直角的涂胶时间(input)*4*玻璃片数）+（等待时间(input)*玻璃片数）+（切换时间(input)*玻璃片数/35）
+                new_order.SOT = (new_order.total_circumference / self.tujiao_speed) + (self.zhijiao_tujiao * 4 * new_order.amount) + (self.wait_time + new_order.amount) + (self.switch_time * new_order.amount / 35)
+                self.order_list.append(new_order)
 
-
-    # old method using pandas
-    '''
-    def read_excel(self):
-        print("Reading input file...")
-        self.dataframe = pd.read_excel('order_list.xlsx', sheet_name = 'Sheet1')
-        index_series = self.dataframe[self.dataframe.columns[0]]
-        self.num_orders = index_series[1:].max()
-        print("# of orders: " + str(self.num_orders))
-        # Updating order list
-        deadline_series = self.dataframe[self.dataframe.columns[11]]
-        
-        for i in range(1, self.num_orders + 1):
-            new_order = Order(deadline_series[i], self.dataframe["SOT"][i], i)
-            self.order_list.append(new_order)
-    '''
+    def output(self):
+        workbook = xlwt.Workbook()
+        sheet = workbook.add_sheet('Sheet1')
+        self.order_list.sort(key = lambda x: x.EDD, reverse = False)
+        for i in range(len(HEADINGS)):
+            sheet.write(0, i, HEADINGS[i])
+        for i in range(len(self.order_list)):
+            current_order = self.order_list[i]
+            sheet.write(i + 1, 0, i + 1)
+            sheet.write(i + 1, 2, current_order.order_num)
+            sheet.write(i + 1, 6, current_order.amount)
+            sheet.write(i + 1, 9, current_order.total_circumference)
+            date_format = xlwt.XFStyle()
+            date_format.num_format_str = 'yyyy/mm/dd'
+            sheet.write(i + 1, 11, current_order.deadline, date_format)
+            sheet.write(i + 1, 12, current_order.EDD)
+            sheet.write(i + 1, 13, current_order.SOT)
+        workbook.save('result.xls')
 
     def sort_edd(self):
         self.order_list.sort(key = lambda x: x.EDD, reverse = False)

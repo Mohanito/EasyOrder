@@ -28,10 +28,3 @@ class Order:
             yanmi = self.worksheet.cell(row,22).value
             if type(pianshu) == type(yanmi) == float:
                 self.total_circumference += (pianshu * yanmi)
-        print(self.total_circumference)
-
-
-
-    def print_order_details(self):
-        print("Order {}".format(str(self.order_num)))
-        print("EDD = {}, SOT = {}, STR = {}\n".format(str(self.EDD), str(self.SOT), str(self.STR)))
