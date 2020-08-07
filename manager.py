@@ -15,10 +15,10 @@ class Manager:
         self.num_orders = 0
 
         # below are user inputs
-        self.tujiao_speed = 1
-        self.zhijiao_tujiao = 1
-        self.wait_time = 1
-        self.switch_time = 1
+        self.tujiao_speed = 29 # 米/分钟
+        self.zhijiao_tujiao = 3 # 秒
+        self.wait_time = 1 #秒
+        self.switch_time = 60 #秒
 
     def set_input_path(self, path):
         self.input_path = path
@@ -28,7 +28,7 @@ class Manager:
             if ".xls" in filename:
                 new_order = Order(self.input_path + '/' + filename)
                 new_order.read_input()
-                # （每个订单号的玻璃累计周长/涂胶速度(input)）+ 每片玻璃直角的涂胶时间(input)*4*玻璃片数）+（等待时间(input)*玻璃片数）+（切换时间(input)*玻璃片数/35）
+                # （每个订单号的玻璃累计周长（米）/涂胶速度(input)）+ 每片玻璃直角的涂胶时间(input)*4*玻璃片数）+（等待时间(input)*玻璃片数）+（切换时间(input)*玻璃片数/35）
                 new_order.SOT = (new_order.total_circumference / self.tujiao_speed) + (self.zhijiao_tujiao * 4 * new_order.amount) + (self.wait_time + new_order.amount) + (self.switch_time * new_order.amount / 35)
                 self.order_list.append(new_order)
 

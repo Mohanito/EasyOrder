@@ -11,7 +11,7 @@ def main():
     manager.wait_time = input("输入等待时间：")
     manager.switch_time = input("输入切换时间：")
     '''
-    manager.set_input_path("/Users/Mohan/Desktop/EasyOrder/EasyOrder/Orders")
+    manager.set_input_path("/Users/Mohan/Desktop/EasyOrder/EasyOrder/new_order_set")
     manager.read_input_dir()
     manager.output()
 
