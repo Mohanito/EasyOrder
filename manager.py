@@ -35,14 +35,19 @@ class Manager:
     def output(self):
         workbook = xlwt.Workbook()
         sheet = workbook.add_sheet('Sheet1')
+        # Sort using EDD
         self.order_list.sort(key = lambda x: x.EDD, reverse = False)
+
         for i in range(len(HEADINGS)):
             sheet.write(0, i, HEADINGS[i])
+        
         for i in range(len(self.order_list)):
             current_order = self.order_list[i]
             sheet.write(i + 1, 0, i + 1)
             sheet.write(i + 1, 2, current_order.order_num)
+            sheet.write(i + 1, 3, current_order.order_code)
             sheet.write(i + 1, 6, current_order.amount)
+            sheet.write(i + 1, 7, current_order.total_area)
             sheet.write(i + 1, 9, current_order.total_circumference)
             date_format = xlwt.XFStyle()
             date_format.num_format_str = 'yyyy/mm/dd'

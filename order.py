@@ -11,6 +11,7 @@ class Order:
         self.deadline = 0
         self.EDD = 0
         self.amount = 0
+        self.total_area = 0
         self.total_circumference = 0
         # TODO:
         self.SOT = 0#SOT  # needs to be calculated
@@ -22,6 +23,7 @@ class Order:
         self.deadline = xlrd.xldate.xldate_as_datetime(self.worksheet.cell(9, 24).value, self.workbook.datemode)
         self.EDD = (self.deadline - datetime.datetime.now()).days
         self.amount = self.worksheet.cell(7, 32).value
+        self.total_area = self.worksheet.cell(9, 30).value
         self.total_circumference = 0
         for row in range(self.worksheet.nrows):
             pianshu = self.worksheet.cell(row,14).value
