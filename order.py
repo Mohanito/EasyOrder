@@ -13,8 +13,9 @@ class Order:
         self.amount = 0
         self.total_area = 0
         self.total_circumference = 0
+        self.total_longer = 0
         # TODO:
-        self.SOT = 0#SOT  # needs to be calculated
+        self.SOT = 0 #SOT  # needs to be calculated
         self.STR = 0
     
     def read_input(self):
@@ -24,9 +25,13 @@ class Order:
         self.EDD = (self.deadline - datetime.datetime.now()).days
         self.amount = self.worksheet.cell(7, 32).value
         self.total_area = self.worksheet.cell(9, 30).value
+
         self.total_circumference = 0
+        self.total_longer = 0
         for row in range(self.worksheet.nrows):
             pianshu = self.worksheet.cell(row,14).value
-            yanmi = self.worksheet.cell(row,22).value
-            if type(pianshu) == type(yanmi) == float:
-                self.total_circumference += (pianshu * yanmi)
+            changdu = self.worksheet.cell(row,8).value
+            gaodu = self.worksheet.cell(row,12).value
+            if type(pianshu) == type(changdu) == type(gaodu) == float:
+                self.total_circumference += (pianshu * 2 * (changdu + gaodu))
+                self.total_longer += (pianshu * max(changdu, gaodu))

@@ -48,6 +48,7 @@ class Manager:
             sheet.write(i + 1, 3, current_order.order_code)
             sheet.write(i + 1, 6, current_order.amount)
             sheet.write(i + 1, 7, current_order.total_area)
+            sheet.write(i + 1, 8, current_order.total_longer)
             sheet.write(i + 1, 9, current_order.total_circumference)
             date_format = xlwt.XFStyle()
             date_format.num_format_str = 'yyyy/mm/dd'
