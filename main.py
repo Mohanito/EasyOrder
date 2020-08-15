@@ -4,12 +4,17 @@ from manager import *
 from order import *
 import pandas as pd
 
-def main():
-    bg_color = '#d9ffde'
+bg_color = '#b7d7e8'
 
+def main():
+
+    manager = Manager()
+    manager.set_input_path("/Users/Mohan/Desktop/EasyOrder/EasyOrder/new_order_set")
+
+    # Tkinter UI
     root = tk.Tk()
 
-    canvas = tk.Canvas(root, height = 400, width = 400)
+    canvas = tk.Canvas(root, height = 600, width = 600)
     canvas.pack()
 
     frame = tk.Frame(root, bg = bg_color)
@@ -33,28 +38,36 @@ def main():
     label4 = tk.Label(frame, text = '输入切换时间：', bg = bg_color)
     label4.place(x = 0, y = 200)
 
-    button = tk.Button(frame, text = 'RUN', bg = 'gray', command = lambda: GUI_read_input(entry1.get(), entry2.get(), entry3.get(), entry4.get()))
+    button = tk.Button(frame, text = 'RUN', bg = 'white', command = lambda: GUI_on_click(lower_label, manager, entry1.get(), entry2.get(), entry3.get(), entry4.get()))
     button.place(relx = 0.45, rely = 0.9)
 
+    lower_frame = tk.Frame(frame, bg = 'white')
+    lower_frame.place(relx=0.5, rely=0.45, relwidth=0.9, relheight=0.4, anchor='n')
+
+    lower_label = tk.Label(lower_frame)
+    lower_label.place(relwidth = 1, relheight = 1)
+    lower_label['text'] = 'welcome'
+
     root.mainloop()
+    
+    # tkinter UI ends
 
 
-    manager = Manager()
-    '''
-    manager.tujiao_speed = input("输入涂胶速度：")
-    manager.zhijiao_tujiao = input("输入直角涂胶时间：")
-    manager.wait_time = input("输入等待时间：")
-    manager.switch_time = input("输入切换时间：")
-    '''
-    manager.set_input_path("/Users/Mohan/Desktop/EasyOrder/EasyOrder/new_order_set")
-    manager.read_input_dir()
-    manager.output()
-
-def GUI_read_input(tujiao_speed, zhijiao_tujiao, wait_time, switch_time):
-    print("涂胶速度 = {}".format(tujiao_speed))
-    print("直角涂胶时间 = {}".format(zhijiao_tujiao))
-    print("等待时间 = {}".format(wait_time))
-    print("切换时间 = {}".format(switch_time))
+def GUI_on_click(lower_label, manager, tujiao_speed, zhijiao_tujiao, wait_time, switch_time):
+    if not(tujiao_speed.isnumeric() and zhijiao_tujiao.isnumeric() and wait_time.isnumeric() and switch_time.isnumeric()):
+        lower_label['text'] = '请填入整数'
+    else:
+        manager.tujiao_speed = float(tujiao_speed)
+        manager.zhijiao_tujiao = float(zhijiao_tujiao)
+        manager.wait_time = float(wait_time)
+        manager.switch_time = float(switch_time)
+        lower_label['text'] = 'data type correct'
+        try:
+            manager.read_input_dir()
+            manager.output()
+            lower_label['text'] += '\ndone, please check result.xls'
+        except:
+            lower_label['text'] = 'Unexpected error'    # tested, works
 
 
 if __name__ == "__main__":
