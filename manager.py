@@ -5,7 +5,7 @@ import xlwt
 
 HEADINGS = ["序号", "项目名称", "订单号", "产品配置", "单片玻璃种类", "单片玻璃厚度(mm)", 
             "总片数", "总面积(m^2)", "长边单侧累计长度(mm)", "总周长(mm)", "", "交货日期",
-            "EDD", "SOT", "STR", "订单延迟时间"]
+            "EDD", "SOT(秒)", "STR(小时)", "订单延迟时间", " ", "月平均工作天数", "作业制", "标准作业时间"]
 
 class Manager:
     def __init__(self):
@@ -20,6 +20,10 @@ class Manager:
         self.wait_time = 1 #秒
         self.switch_time = 60 #秒
 
+        self.working_days = 28
+        self.shift_length = 9 # hours
+        self.num_shift = 1  # or 2
+
     def set_input_path(self, path):
         self.input_path = path
 
@@ -30,6 +34,7 @@ class Manager:
                 new_order.read_input()
                 # （每个订单号的玻璃累计周长（mm）/涂胶速度(m/min)）+ 每片玻璃直角的涂胶时间(s)*4*玻璃片数）+（等待时间(s)*玻璃片数）+（切换时间(s)*玻璃片数/35）
                 new_order.SOT = (new_order.total_circumference / self.tujiao_speed) / (1000 / 60) + (self.zhijiao_tujiao * 4 * new_order.amount) + (self.wait_time + new_order.amount) + (self.switch_time * new_order.amount / 35)
+                new_order.STR = new_order.EDD * self.shift_length * self.num_shift - (new_order.SOT / 3600)
                 self.order_list.append(new_order)
 
     def output(self):
@@ -37,10 +42,18 @@ class Manager:
         sheet = workbook.add_sheet('Sheet1')
         # Sort using EDD
         self.sort_sot()
+        # after sorting, the delay time should be calculated according to the sequence
 
         for i in range(len(HEADINGS)):
             sheet.write(0, i, HEADINGS[i])
         
+        sheet.write(1, 17, self.working_days)
+        if self.num_shift == 1:
+            sheet.write(1, 18, "单班作业制")
+        else:
+            sheet.write(1, 18, "双班作业制")
+        sheet.write(1, 19, self.shift_length)
+
         for i in range(len(self.order_list)):
             current_order = self.order_list[i]
             sheet.write(i + 1, 0, i + 1)
@@ -56,6 +69,7 @@ class Manager:
             sheet.write(i + 1, 11, current_order.deadline, date_format)
             sheet.write(i + 1, 12, current_order.EDD)
             sheet.write(i + 1, 13, current_order.SOT)
+            sheet.write(i + 1, 14, current_order.STR)
         workbook.save('result.xls')
 
     def sort_edd(self):
