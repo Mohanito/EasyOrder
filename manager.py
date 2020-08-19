@@ -41,8 +41,8 @@ class Manager:
     def output(self):
         workbook = xlwt.Workbook()
         sheet = workbook.add_sheet('Sheet1')
-        # Sort using EDD
-        self.sort_sot()
+        # Sort using EDD, SOT, or STR
+        self.sort_str()
         # after sorting, the delay time should be calculated according to the sequence
         self.calculate_delay()
         for i in range(len(HEADINGS)):

@@ -55,8 +55,8 @@ def main():
     label10.place(x = 350, y = 250)
 
     rb_var = tk.IntVar()    # num_shift
-    
-    button = tk.Button(frame, text = '运行', bg = 'white', command = lambda: GUI_on_click(lower_label, manager, entry1.get(), entry2.get(), entry3.get(), entry4.get()))
+
+    button = tk.Button(frame, text = '运行', bg = 'white', command = lambda: GUI_on_click(lower_label, manager, entry1.get(), entry2.get(), entry3.get(), entry4.get(), entry5.get(), rb_var))
     button.place(relx = 0.45, rely = 0.9)
 
     rb1 = tk.Radiobutton(frame, text = '单班作业制', variable = rb_var, value = 1, command = lambda: rb_on_click(manager, rb_var))
@@ -76,14 +76,17 @@ def main():
     # tkinter UI ends
 
 
-def GUI_on_click(lower_label, manager, tujiao_speed, zhijiao_tujiao, wait_time, switch_time):
-    if not(tujiao_speed.isnumeric() and zhijiao_tujiao.isnumeric() and wait_time.isnumeric() and switch_time.isnumeric()):
+def GUI_on_click(lower_label, manager, tujiao_speed, zhijiao_tujiao, wait_time, switch_time, shift_length, rb_var):
+    if not(tujiao_speed.isnumeric() and zhijiao_tujiao.isnumeric() and wait_time.isnumeric() and switch_time.isnumeric() and shift_length.isnumeric()):
         lower_label['text'] = '请填入整数'
+    elif not (rb_var.get() == 1 or rb_var.get() == 2):
+        lower_label['text'] = '请选择单/双班作业制'
     else:
         manager.tujiao_speed = float(tujiao_speed)
         manager.zhijiao_tujiao = float(zhijiao_tujiao)
         manager.wait_time = float(wait_time)
         manager.switch_time = float(switch_time)
+        manager.shift_length = float(shift_length)
         lower_label['text'] = '数据符合要求'
         try:
             manager.read_input_dir()    # orders get duplicated on click
@@ -95,7 +98,7 @@ def GUI_on_click(lower_label, manager, tujiao_speed, zhijiao_tujiao, wait_time, 
 
 def rb_on_click(manager, rb_var):
     # 单/双班工作制
-    print(rb_var.get())
+    # print(rb_var.get())
     manager.num_shift = rb_var.get()
 
 
