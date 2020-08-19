@@ -5,7 +5,7 @@ import xlwt
 
 HEADINGS = ["序号", "项目名称", "订单号", "产品配置", "单片玻璃种类", "单片玻璃厚度(mm)", 
             "总片数", "总面积(m^2)", "长边单侧累计长度(mm)", "总周长(mm)", "", "交货日期",
-            "EDD", "SOT(秒)", "STR(小时)", "订单延迟时间", " ", "月平均工作天数", "作业制", "标准作业时间"]
+            "EDD", "SOT(小时)", "STR(小时)", "订单延迟时间", " ", "月平均工作天数", "作业制", "标准作业时间"]
 
 class Manager:
     def __init__(self):
@@ -34,7 +34,8 @@ class Manager:
                 new_order.read_input()
                 # （每个订单号的玻璃累计周长（mm）/涂胶速度(m/min)）+ 每片玻璃直角的涂胶时间(s)*4*玻璃片数）+（等待时间(s)*玻璃片数）+（切换时间(s)*玻璃片数/35）
                 new_order.SOT = (new_order.total_circumference / self.tujiao_speed) / (1000 / 60) + (self.zhijiao_tujiao * 4 * new_order.amount) + (self.wait_time + new_order.amount) + (self.switch_time * new_order.amount / 35)
-                new_order.STR = new_order.EDD * self.shift_length * self.num_shift - (new_order.SOT / 3600)
+                new_order.SOT /= 3600
+                new_order.STR = new_order.EDD * self.shift_length * self.num_shift - new_order.SOT
                 self.order_list.append(new_order)
 
     def output(self):
@@ -43,7 +44,7 @@ class Manager:
         # Sort using EDD
         self.sort_sot()
         # after sorting, the delay time should be calculated according to the sequence
-
+        self.calculate_delay()
         for i in range(len(HEADINGS)):
             sheet.write(0, i, HEADINGS[i])
         
@@ -70,13 +71,13 @@ class Manager:
             sheet.write(i + 1, 12, current_order.EDD)
             sheet.write(i + 1, 13, current_order.SOT)
             sheet.write(i + 1, 14, current_order.STR)
+            sheet.write(i + 1, 15, current_order.remaining_delay)
         workbook.save('result.xls')
 
     def sort_edd(self):
         self.order_list.sort(key = lambda x: x.EDD, reverse = False)
         for order in self.order_list:
             print(str(order.order_num) + ": EDD = " + str(order.EDD))
-        # need to update STR after sorting?
 
     def sort_sot(self):
         self.order_list.sort(key = lambda x: x.SOT, reverse = False)
@@ -84,4 +85,17 @@ class Manager:
             print(str(order.order_num) + ": SOT = " + str(order.SOT))
     
     def sort_str(self):
-        pass
+        self.order_list.sort(key = lambda x: x.STR, reverse = False)
+        for order in self.order_list:
+            print(str(order.order_num) + ": STR = " + str(order.STR))
+    
+    def calculate_delay(self):
+        # please call this after sorting is complete
+        SOT_SUM = 0
+        for i in range(len(self.order_list)):
+            order = self.order_list[i]
+            SOT_SUM += order.SOT
+            order.remaining_delay = (-1) * order.STR if i == 0 else (SOT_SUM - order.STR)
+
+
+            

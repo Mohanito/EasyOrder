@@ -16,8 +16,8 @@ class Order:
         self.total_longer = 0
         self.SOT = 0
         self.thickness = ""     # 4 5 6 8 10 12 bb 单片玻璃厚度
-        # TODO:
         self.STR = 0
+        self.remaining_delay = 0   # 剩余延迟时间
     
     def read_input(self):
         self.order_num = self.worksheet.cell(3, 3).value

@@ -72,7 +72,7 @@ def GUI_on_click(lower_label, manager, tujiao_speed, zhijiao_tujiao, wait_time, 
         manager.switch_time = float(switch_time)
         lower_label['text'] = 'data type correct'
         try:
-            manager.read_input_dir()
+            manager.read_input_dir()    # orders get duplicated on click
             manager.output()
             lower_label['text'] += '\ndone, please check result.xls'
         except:
