@@ -2,6 +2,7 @@ import pandas as pd
 from order import *
 import os
 import xlwt
+import time
 
 HEADINGS = ["序号", "项目名称", "订单号", "产品配置", "单片玻璃种类", "单片玻璃厚度(mm)", 
             "总片数", "总面积(m^2)", "长边单侧累计长度(mm)", "总周长(mm)", "", "交货日期",
@@ -23,6 +24,7 @@ class Manager:
         self.working_days = 28
         self.shift_length = 9 # hours
         self.num_shift = 1  # or 2
+        self.sort_method = "EDD"
 
     def set_input_path(self, path):
         self.input_path = path
@@ -42,7 +44,15 @@ class Manager:
         workbook = xlwt.Workbook()
         sheet = workbook.add_sheet('Sheet1')
         # Sort using EDD, SOT, or STR
-        self.sort_str()
+        if self.sort_method == "EDD":
+            self.sort_edd()
+        elif self.sort_method == "SOT":
+            self.sort_sot()
+        elif self.sort_method == "STR":
+            self.sort_str()
+        else:
+            print("unknown sort method")
+            pass
         # after sorting, the delay time should be calculated according to the sequence
         self.calculate_delay()
         for i in range(len(HEADINGS)):
@@ -72,7 +82,9 @@ class Manager:
             sheet.write(i + 1, 13, current_order.SOT)
             sheet.write(i + 1, 14, current_order.STR)
             sheet.write(i + 1, 15, current_order.remaining_delay)
-        workbook.save('result.xls')
+        
+        timestr = time.strftime("%Y%m%d-%H%M%S")
+        workbook.save(timestr + '-' + self.sort_method + '.xls')
 
     def sort_edd(self):
         self.order_list.sort(key = lambda x: x.EDD, reverse = False)
