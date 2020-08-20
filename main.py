@@ -2,7 +2,6 @@ import time
 import tkinter as tk
 from manager import *
 from order import *
-import pandas as pd
 
 bg_color = '#b7d7e8'
 

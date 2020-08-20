@@ -1,4 +1,3 @@
-import pandas as pd
 from order import *
 import os
 import xlwt
@@ -12,7 +11,6 @@ class Manager:
     def __init__(self):
         self.input_path = ""
         self.order_list = []
-        self.dataframe = pd.DataFrame()
         self.num_orders = 0
 
         # below are user inputs
